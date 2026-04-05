@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weeping Willow Whisperer — Contract Library</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Lato:wght@300;400;600;700&display=swap');
+
+  :root {
+    --forest: #2C3E35;
+    --sage: #8A9B87;
+    --mist: #D4DDD3;
+    --sand: #E8DCC8;
+    --cream: #F7F4EC;
+    --charcoal: #3A3A3A;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    line-height: 1.7;
+    font-size: 11pt;
+  }
+
+  .controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: white;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    border: 1px solid var(--mist);
+  }
+
+  .controls h3 {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--forest);
+    font-size: 14pt;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .controls p {
+    font-size: 9pt;
+    color: var(--charcoal);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  .doc-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .doc-nav button {
+    background: var(--cream);
+    color: var(--forest);
+    border: 1px solid var(--mist);
+    padding: 8px 12px;
+    cursor: pointer;
+    font-family: 'Lato', sans-serif;
+    font-size: 9pt;
+    font-weight: 600;
+    border-radius: 4px;
+    text-align: left;
+    transition: all 0.2s;
+  }
+
+  .doc-nav button:hover {
+    background: var(--sage);
+    color: white;
+    border-color: var(--sage);
+  }
+
+  .print-btn {
+    background: var(--forest);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-family: 'Lato', sans-serif;
+    font-size: 10pt;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 4px;
+    width: 100%;
+    text-transform: uppercase;
+  }
+
+  .print-btn:hover {
+    background: var(--sage);
+  }
+
+  .document {
+    max-width: 8.5in;
+    margin: 40px auto;
+    background: white;
+    padding: 0.75in 0.85in;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    min-height: 11in;
+    page-break-after: always;
+  }
+
+  .letterhead {
+    border-bottom: 2px solid var(--forest);
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .brand-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22pt;
+    font-weight: 600;
+    color: var(--forest);
+    line-height: 1.1;
+    letter-spacing: 0.5px;
+  }
+
+  .brand-mark .sub {
+    font-family: 'Lato', sans-serif;
+    font-size: 8pt;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: var(--sage);
+    text-transform: uppercase;
+    margin-top: 4px;
+    display: block;
+  }
+
+  .letterhead-right {
+    text-align: right;
+    font-size: 8pt;
+    color: var(--sage);
+    line-height: 1.6;
+    letter-spacing: 0.5px;
+  }
+
+  h1.doc-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28pt;
+    font-weight: 600;
+    color: var(--forest);
+    margin-bottom: 4px;
+    letter-spacing: 0.3px;
+  }
+
+  .entity-line {
+    font-size: 9pt;
+    color: var(--sage);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 32px;
+    font-weight: 600;
+  }
+
+  .preamble {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13pt;
+    line-height: 1.7;
+    color: var(--charcoal);
+    margin-bottom: 28px;
+    font-style: italic;
+  }
+
+  .preamble p {
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16pt;
+    font-weight: 600;
+    color: var(--forest);
+    margin-top: 28px;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--mist);
+  }
+
+  h3 {
+    font-family: 'Lato', sans-serif;
+    font-size: 11pt;
+    font-weight: 700;
+    color: var(--forest);
+    margin-top: 16px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  p {
+    margin-bottom: 12px;
+    text-align: justify;
+  }
+
+  ul {
+    margin-left: 20px;
+    margin-bottom: 12px;
+  }
+
+  ul li {
+    margin-bottom: 6px;
+    padding-left: 4px;
+  }
+
+  strong {
+    color: var(--forest);
+    font-weight: 700;
+  }
+
+  .field {
+    color: var(--sage);
+    font-style: italic;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--mist);
+    margin: 24px 0;
+  }
+
+  .signature-block {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .sig-party {
+    border-top: 1px solid var(--mist);
+    padding-top: 16px;
+  }
+
+  .sig-party .party-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13pt;
+    font-weight: 600;
+    color: var(--forest);
+    margin-bottom: 20px;
+  }
+
+  .sig-line {
+    border-bottom: 1px solid var(--charcoal);
+    height: 28px;
+    margin-bottom: 4px;
+  }
+
+  .sig-label {
+    font-size: 8pt;
+    color: var(--sage);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .closing-note {
+    margin-top: 36px;
+    padding: 20px 24px;
+    background: var(--cream);
+    border-left: 3px solid var(--sage);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12pt;
+    font-style: italic;
+    color: var(--forest);
+    line-height: 1.7;
+  }
+
+  .footer {
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--mist);
+    text-align: center;
+    font-size: 8pt;
+    color: var(--sage);
+    letter-spacing: 1px;
+  }
+
+  .sow-overview {
+    background: var(--cream);
+    padding: 16px 20px;
+    border-left: 3px solid var(--sage);
+    margin-bottom: 24px;
+    font-size: 10pt;
+  }
+
+  .sow-overview strong {
+    display: inline-block;
+    min-width: 120px;
+  }
+
+  @media print {
+    body {
+      background: white;
+    }
+    .controls {
+      display: none;
+    }
+    .document {
+      margin: 0;
+      box-shadow: none;
+      padding: 0.75in 0.85in;
+      max-width: 100%;
+      page-break-after: always;
+    }
+    h2 {
+      page-break-after: avoid;
+    }
+    .signature-block {
+      page-break-inside: avoid;
+    }
+    .closing-note {
+      page-break-inside: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <h3>Willow Contract Library</h3>
+  <p>Five templates, print-ready. Use Print → Save as PDF for clean files.</p>
+  <div class="doc-nav">
+    <button onclick="document.getElementById('doc1').scrollIntoView({behavior:'smooth'})">1. Brand Development</button>
+    <button onclick="document.getElementById('doc2').scrollIntoView({behavior:'smooth'})">2. Statement of Work</button>
+    <button onclick="document.getElementById('doc3').scrollIntoView({behavior:'smooth'})">3. Consulting Retainer</button>
+    <button onclick="document.getElementById('doc4').scrollIntoView({behavior:'smooth'})">4. Writing Commission</button>
+    <button onclick="document.getElementById('doc5').scrollIntoView({behavior:'smooth'})">5. Single Project Design</button>
+  </div>
+  <button class="print-btn" onclick="window.print()">Print All to PDF</button>
+</div>
+
+<!-- DOCUMENT 1: BRAND DEVELOPMENT -->
+<div class="document" id="doc1">
+  <div class="letterhead">
+    <div class="brand-mark">
+      Weeping Willow Whisperer
+      <span class="sub">LLC · San Diego, California</span>
+    </div>
+    <div class="letterhead-right">
+      candanu@icloud.com<br>
+      weepingwillowwhisperer.net
+    </div>
+  </div>
+
+  <h1 class="doc-title">Brand Development Agreement</h1>
+  <div class="entity-line">Flat Fee Engagement</div>
+
+  <div class="preamble">
+    <p>This agreement is between <strong>Weeping Willow Whisperer LLC</strong> (referred to throughout as "Willow"), a California limited liability company, and <span class="field">[Client Legal Name]</span> (referred to as "Client"), entered into on <span class="field">[Effective Date]</span>.</p>
+    <p>What follows is a working agreement — the shape of how we'll collaborate, what each of us is responsible for, and what happens if the path changes. It is written plainly on purpose. A contract should protect both sides without making either feel smaller.</p>
+  </div>
+
+  <h2>1. The Work</h2>
+  <p>Willow will provide brand development services for Client, including the following:</p>
+  <ul>
+    <li><span class="field">[Discovery and positioning]</span></li>
+    <li><span class="field">[Naming, if applicable]</span></li>
+    <li><span class="field">[Visual identity system — logo, typography, color, usage guidelines]</span></li>
+    <li><span class="field">[Messaging framework — voice, tone, core language]</span></li>
+    <li><span class="field">[Brand guidelines document]</span></li>
+    <li><span class="field">[Other deliverables as specified]</span></li>
+  </ul>
+  <p><strong>Outside this scope:</strong> website design and development, ongoing content creation, marketing campaigns, printing and production costs, photography, illustration commissioned from third parties, and any services not explicitly listed above. Additional work can be added through a written amendment to this agreement, quoted separately.</p>
+
+  <h2>2. Deliverables and Rhythm</h2>
+  <p>The project will move through three phases:</p>
+  <p><strong>Discovery</strong> — understanding Client's business, audience, and positioning. Typically two to three weeks.</p>
+  <p><strong>Development</strong> — creating the core brand system. Typically four to six weeks.</p>
+  <p><strong>Refinement</strong> — revisions, final files, and handover. Typically two to three weeks.</p>
+  <p>Total engagement: approximately <span class="field">[X] weeks</span> from the deposit date, subject to the feedback windows described in Section 6. Brand work has its own pace; these timeframes are honest estimates, not rigid deadlines.</p>
+
+  <h2>3. Fee and Payment</h2>
+  <p>The total flat fee for the work described in Section 1 is <span class="field">[$Amount] USD</span>.</p>
+  <p><strong>Payment structure:</strong> 50% deposit (<span class="field">[$Amount]</span>) due upon signing to secure the engagement and Willow's calendar. Work begins once the deposit clears. The remaining 50% (<span class="field">[$Amount]</span>) is due upon delivery of final files.</p>
+  <p><strong>Accepted methods:</strong> bank transfer (ACH or wire), or other methods agreed in writing.</p>
+  <p><strong>Invoicing:</strong> invoices are issued at signing and upon final delivery. Payment is due within seven (7) days of invoice date.</p>
+  <p><strong>Late payment:</strong> payments more than fourteen (14) days past due accrue a late fee of 1.5% per month on the outstanding balance. Willow may pause work on overdue accounts until payment is current.</p>
+
+  <h2>4. Revisions</h2>
+  <p>Three (3) rounds of revisions are included for each major deliverable. A round is defined as a consolidated set of feedback delivered in a single written response from Client's named point of contact.</p>
+  <p>Revisions requested after the third round, or outside the original scope, are billed at <span class="field">[$Rate] per hour</span>, quoted in advance and approved in writing before work proceeds.</p>
+  <p>Feedback that contradicts previously approved directions may be treated as a new round at Willow's discretion.</p>
+
+  <h2>5. Ownership</h2>
+  <p>All work produced under this agreement — including drafts, concepts, and final deliverables — remains the intellectual property of Willow until final payment is received in full.</p>
+  <p>Upon receipt of final payment, full ownership of the approved final deliverables transfers to Client. Client may use, modify, and reproduce the work without further permission or additional fees.</p>
+  <p><strong>Willow retains the right</strong> to display the work in portfolio, case studies, and promotional materials unless Client requests otherwise in writing before the project begins. Willow will never disclose confidential business information in such displays.</p>
+  <p><strong>Preliminary concepts not selected</strong> by Client remain Willow's property and may be repurposed for other projects.</p>
+  <p><strong>Third-party assets</strong> (fonts, stock imagery, licensed elements) carry their own licenses, which will be disclosed to Client. Client is responsible for maintaining those licenses after handover.</p>
+
+  <h2>6. What the Client Brings</h2>
+  <p>For the work to move well, Client agrees to:</p>
+  <ul>
+    <li>Provide a single named point of contact with authority to give feedback and approvals</li>
+    <li>Deliver feedback within <strong>five (5) business days</strong> of receiving each deliverable</li>
+    <li>Provide all necessary brand inputs, references, and materials in a timely manner</li>
+    <li>Respond to questions that require clarification within three (3) business days</li>
+  </ul>
+  <p>If feedback is delayed beyond these windows, the project timeline extends accordingly. Delays of more than thirty (30) days without communication may be treated as a pause, and Willow reserves the right to adjust timelines, reallocate calendar time, or treat prolonged silence as termination under Section 7.</p>
+
+  <h2>7. If Either of Us Needs to Step Away</h2>
+  <p>Either party may terminate this agreement at any time with written notice.</p>
+  <p>If Client terminates, the following applies based on the phase reached:</p>
+  <ul>
+    <li><strong>During Discovery:</strong> deposit is retained in full; no further payment owed</li>
+    <li><strong>During Development:</strong> Client pays 75% of the total fee; Willow delivers work completed to date</li>
+    <li><strong>During Refinement:</strong> Client pays the full fee; Willow delivers all completed work</li>
+  </ul>
+  <p>If Willow terminates for reasons other than Client breach, Willow will refund any portion of the deposit corresponding to work not yet performed, and deliver all work completed to date.</p>
+  <p>If Client breaches this agreement — including non-payment, prolonged unresponsiveness, or abusive conduct — Willow may terminate immediately, retain all payments received, and is released from further obligation.</p>
+
+  <h2>8. Confidentiality</h2>
+  <p>Both parties agree to protect each other's confidential information — including business strategies, financial details, unreleased work, internal processes, and any information marked or reasonably understood as confidential.</p>
+  <p>This obligation continues beyond the end of this agreement. Neither party will disclose confidential information to third parties without written permission, except where required by law.</p>
+
+  <h2>9. Limits</h2>
+  <p>Willow's total liability under this agreement — for any claim, regardless of cause — is limited to the total fees paid by Client under this agreement.</p>
+  <p>Neither party is liable for indirect, incidental, or consequential damages, including lost profits, lost business opportunities, or reputational harm.</p>
+  <p>Willow provides creative services in good faith but does not guarantee specific business outcomes, sales results, or market performance.</p>
+
+  <h2>10. Governing Law</h2>
+  <p>This agreement is governed by the laws of the State of California.</p>
+  <p>If a dispute arises, both parties agree to attempt resolution through good-faith mediation before pursuing litigation. Mediation costs will be shared equally. Any litigation will take place in San Diego County, California.</p>
+
+  <h2>11. General</h2>
+  <p><strong>Entire agreement:</strong> this document represents the full agreement between the parties and supersedes any prior discussions or understandings.</p>
+  <p><strong>Amendments:</strong> changes to this agreement must be made in writing and signed by both parties.</p>
+  <p><strong>Independent contractor:</strong> Willow operates as an independent contractor, not an employee, partner, or agent of Client.</p>
+  <p><strong>Force majeure:</strong> neither party is liable for delays caused by circumstances beyond reasonable control — including illness, natural disasters, or other significant disruptions.</p>
+  <p><strong>Severability:</strong> if any clause is found unenforceable, the remaining clauses remain in effect.</p>
+
+  <h2>12. Signatures</h2>
+  <p>By signing below, both parties agree to the terms described above.</p>
+  <div class="signature-block">
+    <div class="sig-party">
+      <div class="party-name">Weeping Willow Whisperer LLC</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Signature</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Candan Üstün, Founder</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Date</div>
+    </div>
+    <div class="sig-party">
+      <div class="party-name"><span class="field">[Client Legal Name]</span></div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Signature</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Name, Title</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Date</div>
+    </div>
+  </div>
+
+  <div class="closing-note">
+    Thank you for trusting Willow with this work. A brand, done honestly, is a long conversation between what a business knows about itself and what the world needs to understand. We'll take that conversation seriously — and we'll keep it human the whole way through.
+  </div>
+
+  <div class="footer">
+    WEEPING WILLOW WHISPERER LLC · SAN DIEGO, CALIFORNIA · candanu@icloud.com
+  </div>
+</div>
+
+<!-- DOCUMENT 2: STATEMENT OF WORK -->
+<div class="document" id="doc2">
+  <div class="letterhead">
+    <div class="brand-mark">
+      Weeping Willow Whisperer
+      <span class="sub">LLC · San Diego, California</span>
+    </div>
+    <div class="letterhead-right">
+      candanu@icloud.com<br>
+      weepingwillowwhisperer.net
+    </div>
+  </div>
+
+  <h1 class="doc-title">Statement of Work</h1>
+  <div class="entity-line">Project Specification</div>
+
+  <div class="sow-overview">
+    <p><strong>Project:</strong> <span class="field">[Project Name]</span></p>
+    <p><strong>Client:</strong> <span class="field">[Client Legal Name]</span></p>
+    <p><strong>Date:</strong> <span class="field">[Effective Date]</span></p>
+    <p><strong>SOW Number:</strong> <span class="field">[SOW-001]</span></p>
+  </div>
+
+  <p>This Statement of Work is governed by the Brand Development Agreement between Weeping Willow Whisperer LLC and <span class="field">[Client Legal Name]</span>, dated <span class="field">[Agreement Date]</span>. Where this SOW and the Agreement differ, the Agreement controls.</p>
+
+  <h2>Project Overview</h2>
+  <p><span class="field">[Two or three sentences describing what this engagement is and what it is meant to achieve. Written plainly — what the client needs, what Willow will build, and the spirit of the work.]</span></p>
+
+  <h2>Scope</h2>
+  <p>Willow will deliver the following:</p>
+
+  <h3>Discovery</h3>
+  <ul>
+    <li><span class="field">[Strategy session — positioning, audience, competitive landscape]</span></li>
+    <li><span class="field">[Brand audit, if applicable]</span></li>
+    <li><span class="field">[Written positioning summary]</span></li>
+  </ul>
+
+  <h3>Development</h3>
+  <ul>
+    <li><span class="field">[Naming, if applicable]</span></li>
+    <li><span class="field">[Logo and mark system — primary, secondary, responsive variations]</span></li>
+    <li><span class="field">[Typography system — primary and supporting typefaces with usage rules]</span></li>
+    <li><span class="field">[Color palette — primary, secondary, functional applications]</span></li>
+    <li><span class="field">[Messaging framework — voice, tone, tagline, core language]</span></li>
+  </ul>
+
+  <h3>Refinement</h3>
+  <ul>
+    <li><span class="field">[Brand guidelines document — PDF, approximately 20–30 pages]</span></li>
+    <li><span class="field">[Final file package — logo files in all required formats, color specifications, font files or licensing references]</span></li>
+    <li><span class="field">[Handover call]</span></li>
+  </ul>
+
+  <p><strong>Out of scope:</strong> website design, printed collateral production, photography, illustration, ongoing content, marketing campaigns, and anything not listed above.</p>
+
+  <h2>Timeline</h2>
+  <p>Estimated project duration: <span class="field">[X] weeks</span> from deposit clearance.</p>
+  <ul>
+    <li>Discovery: weeks 1–<span class="field">[X]</span></li>
+    <li>Development: weeks <span class="field">[X]–[X]</span></li>
+    <li>Refinement: weeks <span class="field">[X]–[X]</span></li>
+  </ul>
+  <p>Specific milestone dates will be confirmed in writing at project kickoff.</p>
+
+  <h2>Fee</h2>
+  <p>Total flat fee: <span class="field">[$Amount] USD</span></p>
+  <ul>
+    <li>Deposit (50%) due at signing: <span class="field">[$Amount]</span></li>
+    <li>Balance (50%) due upon final delivery: <span class="field">[$Amount]</span></li>
+  </ul>
+  <p>Additional revision rounds beyond the three included per major deliverable: <span class="field">[$Rate] per hour</span>, quoted and approved in advance.</p>
+
+  <h2>Client Point of Contact</h2>
+  <p><strong>Name:</strong> <span class="field">[Contact Name]</span></p>
+  <p><strong>Role:</strong> <span class="field">[Title]</span></p>
+  <p><strong>Email:</strong> <span class="field">[Email]</span></p>
+  <p><strong>Phone:</strong> <span class="field">[Phone, optional]</span></p>
+  <p>This person holds authority to give feedback, approve deliverables, and make decisions on behalf of Client.</p>
+
+  <h2>Acknowledgment</h2>
+  <p>Both parties acknowledge that this Statement of Work is subject to the terms of the Brand Development Agreement referenced above.</p>
+
+  <div class="signature-block">
+    <div class="sig-party">
+      <div class="party-name">Weeping Willow Whisperer LLC</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Signature</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Candan Üstün</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Date</div>
+    </div>
+    <div class="sig-party">
+      <div class="party-name"><span class="field">[Client Legal Name]</span></div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Signature</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Name</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Date</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    WEEPING WILLOW WHISPERER LLC · SAN DIEGO, CALIFORNIA · candanu@icloud.com
+  </div>
+</div>
+
+<!-- DOCUMENT 3: CONSULTING RETAINER -->
+<div class="document" id="doc3">
+  <div class="letterhead">
+    <div class="brand-mark">
+      Weeping Willow Whisperer
+      <span class="sub">LLC · San Diego, California</span>
+    </div>
+    <div class="letterhead-right">
+      candanu@icloud.com<br>
+      weepingwillowwhisperer.net
+    </div>
+  </div>
+
+  <h1 class="doc-title">Consulting Retainer Agreement</h1>
+  <div class="entity-line">Monthly Advisory Engagement</div>
+
+  <div class="preamble">
+    <p>This agreement is between <strong>Weeping Willow Whisperer LLC</strong> (referred to throughout as "Willow"), a California limited liability company, and <span class="field">[Client Legal Name]</span> (referred to as "Client"), entered into on <span class="field">[Effective Date]</span>.</p>
+    <p>A retainer is a different kind of agreement than a project. It's not built around a deliverable — it's built around presence. Willow commits reserved time and ongoing thinking; Client gains steady access to that thinking. What follows are the terms that keep the arrangement fair to both sides.</p>
+  </div>
+
+  <h2>1. The Engagement</h2>
+  <p>Willow will provide ongoing consulting services to Client in the following areas:</p>
+  <ul>
+    <li><span class="field">[Brand strategy and positioning]</span></li>
+    <li><span class="field">[Emotional ergonomics and experience design guidance]</span></li>
+    <li><span class="field">[Creative direction and editorial review]</span></li>
+    <li><span class="field">[Other advisory areas as specified]</span></li>
+  </ul>
+  <p>The nature of consulting work is conversational and iterative. Willow's role is to think alongside Client, not to produce finished deliverables unless explicitly agreed.</p>
+
+  <h2>2. Retainer Scope</h2>
+  <p>Client retains Willow for <span class="field">[X] hours per month</span> of advisory time, which may include:</p>
+  <ul>
+    <li>Strategy calls and working sessions</li>
+    <li>Written feedback and recommendations</li>
+    <li>Review of Client materials and work-in-progress</li>
+    <li>Asynchronous communication (email, voice notes, documents)</li>
+    <li>Light deliverables under two hours each</li>
+  </ul>
+  <p><strong>Unused hours do not roll over</strong> to subsequent months. Reserved time is reserved time; it cannot be banked.</p>
+  <p><strong>Work exceeding the monthly cap</strong> is billed at <span class="field">[$Rate] per hour</span>, quoted and approved in advance. Alternatively, Client may upgrade the retainer tier going forward.</p>
+
+  <h2>3. Outside the Retainer</h2>
+  <p>The following are not included in retainer hours and require a separate Statement of Work:</p>
+  <ul>
+    <li>Full brand development or rebrands</li>
+    <li>Written pieces over 1,500 words</li>
+    <li>Design production (logos, documents, guidelines, visual systems)</li>
+    <li>Strategic planning documents or formal reports</li>
+    <li>Any project requiring more than four hours of focused work</li>
+  </ul>
+  <p>When a request crosses into project territory, Willow will say so and quote the work separately.</p>
+
+  <h2>4. Fee and Payment</h2>
+  <p>Monthly retainer fee: <span class="field">[$Amount] USD</span></p>
+  <p><strong>Payment terms:</strong> the full monthly fee is due on the <strong>first day of each month</strong>, in advance. Work begins for the month only after payment is received.</p>
+  <p><strong>Accepted methods:</strong> bank transfer (ACH or wire), or other methods agreed in writing.</p>
+  <p><strong>Late payment:</strong> if payment is not received within seven (7) days of the due date, Willow may pause all retainer work until payment is current. Payments more than fourteen (14) days past due accrue a late fee of 1.5% per month on the outstanding balance.</p>
+
+  <h2>5. Term and Renewal</h2>
+  <p>Initial term: <span class="field">[three months]</span> from the Effective Date.</p>
+  <p>After the initial term, this agreement <strong>automatically renews month-to-month</strong> unless either party provides written notice of non-renewal at least <strong>thirty (30) days before the next billing cycle</strong>.</p>
+  <p>The initial term exists because retainer relationships need time to find their rhythm. Shorter arrangements rarely produce meaningful results for either party.</p>
+
+  <h2>6. Availability and Response Time</h2>
+  <p>Willow will respond to Client communications within <strong>two (2) business days</strong> during normal business hours (Monday–Friday, 9am–5pm Pacific Time).</p>
+  <p>Willow is not available on weekends, holidays, or during announced absences. Urgent matters outside normal hours will be addressed at Willow's discretion.</p>
+  <p>Willow will provide at least <strong>seven (7) days notice</strong> before any planned absence of more than three consecutive business days.</p>
+
+  <h2>7. Confidentiality</h2>
+  <p>Both parties agree to protect each other's confidential information — including business strategies, financial details, internal processes, unreleased work, and any information marked or reasonably understood as confidential.</p>
+  <p>This obligation continues beyond the end of this agreement.</p>
+
+  <h2>8. Ownership</h2>
+  <p>Written recommendations, strategic documents, and any materials Willow produces during retainer work become Client's property upon delivery, provided retainer fees are current.</p>
+  <p>Willow retains ownership of <strong>frameworks, methodologies, and internal processes</strong> used to produce those recommendations. Client may apply the recommendations freely but does not own Willow's underlying intellectual property or approach.</p>
+  <p>Willow may reference the working relationship in portfolio and promotional contexts unless Client requests otherwise in writing.</p>
+
+  <h2>9. Termination</h2>
+  <p>Either party may terminate this agreement:</p>
+  <ul>
+    <li><strong>At any time during month-to-month renewal:</strong> with thirty (30) days written notice. Fees for the notice period are owed in full.</li>
+    <li><strong>For breach:</strong> immediately, with written notice, if the other party materially breaches this agreement and fails to cure within ten (10) business days.</li>
+    <li><strong>For non-payment:</strong> Willow may terminate immediately if retainer fees are more than thirty (30) days overdue.</li>
+  </ul>
+  <p>Upon termination, Willow will deliver any work-in-progress completed through the termination date. No refunds are issued for the current month's fee once work has begun.</p>
+
+  <h2>10. Limits</h2>
+  <p>Willow's total liability under this agreement — for any claim, regardless of cause — is limited to the total retainer fees paid by Client during the three (3) months preceding the claim.</p>
+  <p>Neither party is liable for indirect, incidental, or consequential damages.</p>
+  <p>Willow provides advisory services in good faith but does not guarantee specific business outcomes or results.</p>
+
+  <h2>11. Governing Law</h2>
+  <p>This agreement is governed by the laws of the State of California. Disputes will be resolved through good-faith mediation before litigation. Mediation costs are shared equally. Litigation, if necessary, will take place in San Diego County, California.</p>
+
+  <h2>12. General</h2>
+  <p><strong>Independent contractor:</strong> Willow operates as an independent contractor.</p>
+  <p><strong>Amendments:</strong> changes must be made in writing and signed by both parties.</p>
+  <p><strong>Entire agreement:</strong> this document represents the full agreement between the parties.</p>
+  <p><strong>Severability:</strong> if any clause is found unenforceable, the remaining clauses remain in effect.</p>
+
+  <h2>13. Signatures</h2>
+  <div class="signature-block">
+    <div class="sig-party">
+      <div class="party-name">Weeping Willow Whisperer LLC</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Signature</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Candan Üstün, Founder</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Date</div>
+    </div>
+    <div class="sig-party">
+      <div class="party-name"><span class="field">[Client Legal Name]</span></div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Signature</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Name, Title</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Date</div>
+    </div>
+  </div>
+
+  <div class="closing-note">
+    Retainers work when both sides protect the rhythm. Willow will bring steady attention; Client brings steady questions. The work gets better in the returning.
+  </div>
+
+  <div class="footer">
+    WEEPING WILLOW WHISPERER LLC · SAN DIEGO, CALIFORNIA · candanu@icloud.com
+  </div>
+</div>
+
+<!-- DOCUMENT 4: WRITING COMMISSION -->
+<div class="document" id="doc4">
+  <div class="letterhead">
+    <div class="brand-mark">
+      Weeping Willow Whisperer
+      <span class="sub">LLC · San Diego, California</span>
+    </div>
+    <div class="letterhead-right">
+      candanu@icloud.com<br>
+      weepingwillowwhisperer.net
+    </div>
+  </div>
+
+  <h1 class="doc-title">Writing Commission Agreement</h1>
+  <div class="entity-line">Per-Piece Engagement</div>
+
+  <div class="preamble">
+    <p>This agreement is between <strong>Weeping Willow Whisperer LLC</strong> (referred to throughout as "Willow"), a California limited liability company, and <span class="field">[Client Legal Name]</span> (referred to as "Client"), entered into on <span class="field">[Effective Date]</span>.</p>
+    <p>Writing is a quiet kind of labor — it requires time to think, time to write, and time to let the draft rest before returning to it. This agreement sets the terms under which Willow will produce commissioned writing for Client, with enough structure to protect both sides and enough room for the work to breathe.</p>
+  </div>
+
+  <h2>1. The Writing</h2>
+  <p>Willow will produce the following written work for Client:</p>
+  <p><strong>Project:</strong> <span class="field">[Title or working title]</span></p>
+  <p><strong>Type:</strong> <span class="field">[Essay / report / manifesto / long-form document / brand narrative / other]</span></p>
+  <p><strong>Approximate length:</strong> <span class="field">[X] words</span> (with a working range of plus or minus 15%)</p>
+  <p><strong>Purpose and audience:</strong> <span class="field">[One to two sentences describing what the piece is for and who will read it]</span></p>
+  <p><strong>Voice and tone:</strong> <span class="field">[Client voice / Willow voice / blended — specified here]</span></p>
+
+  <h2>2. Outside the Scope</h2>
+  <p>The following are not included in this commission and require separate agreement:</p>
+  <ul>
+    <li>Additional written pieces beyond the one described above</li>
+    <li>Editing of Client's existing writing</li>
+    <li>Research beyond normal background reading</li>
+    <li>Interview transcription or primary source research</li>
+    <li>Design, layout, or typesetting of the final piece</li>
+    <li>Publication, distribution, or promotion of the work</li>
+  </ul>
+
+  <h2>3. Drafts and Revisions</h2>
+  <p>Willow will deliver the work in the following sequence:</p>
+  <p><strong>First draft</strong> — complete piece, delivered within the timeline described in Section 4. This draft is meant to be reacted to as a whole.</p>
+  <p><strong>Second draft</strong> — revised based on Client's consolidated feedback on the first draft.</p>
+  <p><strong>Final draft</strong> — incorporating refinements from Client's feedback on the second draft.</p>
+  <p><strong>Three rounds of revisions are included.</strong> A round is defined as a consolidated set of editorial feedback delivered in writing from Client's named point of contact.</p>
+  <p>Additional rounds, or substantive restructuring requested after the second draft, are billed at <span class="field">[$Rate] per hour</span>, quoted and approved in advance.</p>
+  <p><strong>Feedback must be editorial, not generative.</strong> Client can ask Willow to cut, sharpen, restructure, or reconsider. Client cannot use feedback rounds to commission entirely new material or shift the project's premise.</p>
+
+  <h2>4. Timeline</h2>
+  <p>Estimated delivery schedule from the deposit date:</p>
+  <ul>
+    <li>First draft: <span class="field">[X] weeks</span></li>
+    <li>Second draft: <span class="field">[X] weeks</span> after first-draft feedback received</li>
+    <li>Final draft: <span class="field">[X] weeks</span> after second-draft feedback received</li>
+  </ul>
+  <p>Timelines assume Client provides feedback within the window described in Section 7. Writing has its own pace; these estimates are honest, not rigid.</p>
+
+  <h2>5. Fee and Payment</h2>
+  <p>Total commission fee: <span class="field">[$Amount] USD</span></p>
+  <p><strong>Payment structure:</strong> 50% deposit (<span class="field">[$Amount]</span>) due upon signing to secure the work. Remaining 50% (<span class="field">[$Amount]</span>) due upon delivery of the final draft.</p>
+  <p><strong>Accepted methods:</strong> bank transfer (ACH or wire), or other methods agreed in writing.</p>
+  <p><strong>Late payment:</strong> payments more than fourteen (14) days past due accrue a late fee of 1.5% per month on the outstanding balance. Willow may pause work on overdue accounts.</p>
+
+  <h2>6. Rights and Ownership</h2>
+  <p>Willow retains full ownership of the work until final payment is received.</p>
+  <p>Upon final payment, Client receives <span class="field">[first publication rights / exclusive rights / non-exclusive rights / full copyright transfer]</span> — specified per commission.</p>
+  <p><strong>If first publication rights:</strong> Client holds exclusive rights to publish the work first. After initial publication, rights revert to Willow, and the work may be republished by Willow with attribution to the original publication.</p>
+  <p><strong>If exclusive rights:</strong> Client holds exclusive publication rights for a period of <span class="field">[X] months/years</span> from final delivery. After that window, rights revert to Willow.</p>
+  <p><strong>If full copyright transfer:</strong> all rights transfer to Client upon final payment. Willow retains the right to reference the work in portfolio contexts only.</p>
+  <p><strong>Attribution:</strong> Willow is credited as author unless the work is explicitly commissioned as ghostwriting, which must be noted in this agreement.</p>
+  <p><strong>Ghostwriting note:</strong> <span class="field">[If applicable]</span> This is a ghostwriting commission. Willow waives public attribution and agrees not to claim authorship publicly. Willow may reference the work privately in portfolio contexts without naming Client.</p>
+
+  <h2>7. What the Client Brings</h2>
+  <p>For the work to move well, Client agrees to:</p>
+  <ul>
+    <li>Provide a single named point of contact</li>
+    <li>Deliver feedback on each draft within <strong>seven (7) business days</strong> of receipt</li>
+    <li>Provide any necessary background materials, references, or source documents at the start of the project</li>
+    <li>Respond to clarifying questions within three (3) business days</li>
+  </ul>
+  <p>If feedback is delayed beyond these windows, the timeline extends accordingly.</p>
+
+  <h2>8. Termination and Kill Fee</h2>
+  <p>Either party may terminate this agreement with written notice.</p>
+  <p>If Client terminates, payment is owed based on the stage reached:</p>
+  <ul>
+    <li><strong>Before first draft delivery:</strong> deposit is retained; no further payment owed</li>
+    <li><strong>After first draft, before second:</strong> Client pays 75% of the total fee; Willow delivers the first draft as-is</li>
+    <li><strong>After second draft:</strong> Client pays the full fee; Willow delivers all drafts completed to date</li>
+  </ul>
+  <p>If Willow terminates for reasons other than Client breach, Willow will refund any portion of the deposit corresponding to work not yet performed.</p>
+
+  <h2>9. Confidentiality</h2>
+  <p>Both parties agree to protect each other's confidential information. Any source materials or background shared by Client for the purpose of the commission will be treated as confidential unless Client specifies otherwise.</p>
+
+  <h2>10. Limits</h2>
+  <p>Willow's total liability under this agreement is limited to the total fees paid by Client under this agreement. Neither party is liable for indirect, incidental, or consequential damages.</p>
+  <p>Willow warrants that the work will be original and will not knowingly infringe on any third-party rights. Willow does not guarantee publication acceptance, audience response, or commercial outcomes.</p>
+
+  <h2>11. Governing Law</h2>
+  <p>This agreement is governed by the laws of the State of California. Disputes will be resolved through good-faith mediation before litigation. Litigation, if necessary, will take place in San Diego County, California.</p>
+
+  <h2>12. General</h2>
+  <p><strong>Independent contractor:</strong> Willow operates as an independent contractor.</p>
+  <p><strong>Amendments:</strong> changes must be made in writing and signed by both parties.</p>
+  <p><strong>Entire agreement:</strong> this document represents the full agreement between the parties.</p>
+  <p><strong>Severability:</strong> if any clause is found unenforceable, the remaining clauses remain in effect.</p>
+
+  <h2>13. Signatures</h2>
+  <div class="signature-block">
+    <div class="sig-party">
+      <div class="party-name">Weeping Willow Whisperer LLC</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Signature</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Candan Üstün, Founder</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Date</div>
+    </div>
+    <div class="sig-party">
+      <div class="party-name"><span class="field">[Client Legal Name]</span></div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Signature</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Name, Title</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Date</div>
+    </div>
+  </div>
+
+  <div class="closing-note">
+    A commission is a trust: Client trusts Willow to bring the piece into being, Willow trusts Client to meet the work with care. Both sides hold what the other cannot.
+  </div>
+
+  <div class="footer">
+    WEEPING WILLOW WHISPERER LLC · SAN DIEGO, CALIFORNIA · candanu@icloud.com
+  </div>
+</div>
+
+<!-- DOCUMENT 5: SINGLE PROJECT DESIGN -->
+<div class="document" id="doc5">
+  <div class="letterhead">
+    <div class="brand-mark">
+      Weeping Willow Whisperer
+      <span class="sub">LLC · San Diego, California</span>
+    </div>
+    <div class="letterhead-right">
+      candanu@icloud.com<br>
+      weepingwillowwhisperer.net
+    </div>
+  </div>
+
+  <h1 class="doc-title">Single Project Design Agreement</h1>
+  <div class="entity-line">Focused Engagement</div>
+
+  <div class="preamble">
+    <p>This agreement is between <strong>Weeping Willow Whisperer LLC</strong> (referred to throughout as "Willow"), a California limited liability company, and <span class="field">[Client Legal Name]</span> (referred to as "Client"), entered into on <span class="field">[Effective Date]</span>.</p>
+    <p>This is a focused engagement: one project, clearly defined, delivered with care. What follows are the terms that hold it.</p>
+  </div>
+
+  <h2>1. The Project</h2>
+  <p>Willow will design the following for Client:</p>
+  <p><strong>Project:</strong> <span class="field">[Project name]</span></p>
+  <p><strong>Deliverable:</strong> <span class="field">[Single logo / document template / landing page / piece of collateral / other — specified]</span></p>
+  <p><strong>Format:</strong> <span class="field">[Specify final file formats required]</span></p>
+  <p><strong>Intended use:</strong> <span class="field">[One or two sentences describing where and how the work will be used]</span></p>
+
+  <h2>2. What's Included</h2>
+  <ul>
+    <li>Initial creative exploration and concept presentation</li>
+    <li>Two (2) rounds of revisions</li>
+    <li>Final files delivered in specified formats</li>
+    <li>Handover notes with usage guidance</li>
+  </ul>
+
+  <h2>3. Outside the Scope</h2>
+  <p>The following are not included and require a separate agreement:</p>
+  <ul>
+    <li>Additional design variations beyond the primary deliverable</li>
+    <li>Brand guidelines documents</li>
+    <li>Multiple format adaptations beyond those specified above</li>
+    <li>Printing, production, or manufacturing oversight</li>
+    <li>Ongoing updates or maintenance</li>
+    <li>Photography, illustration, or third-party asset procurement</li>
+  </ul>
+
+  <h2>4. Timeline</h2>
+  <p>Estimated project duration: <span class="field">[X] weeks</span> from the deposit date.</p>
+  <ul>
+    <li>Concept presentation: <span class="field">[X] days</span> after kickoff</li>
+    <li>First revision round complete: <span class="field">[X] days</span> after concept feedback</li>
+    <li>Final delivery: <span class="field">[X] days</span> after second revision feedback</li>
+  </ul>
+
+  <h2>5. Fee and Payment</h2>
+  <p>Total project fee: <span class="field">[$Amount] USD</span></p>
+  <p><strong>Payment structure:</strong></p>
+  <p><strong>For projects under $1,500:</strong> full payment due at signing. Work begins once payment clears.</p>
+  <p><strong>For projects $1,500 and above:</strong> 50% deposit (<span class="field">[$Amount]</span>) due at signing, 50% (<span class="field">[$Amount]</span>) due upon final delivery.</p>
+  <p><strong>Accepted methods:</strong> bank transfer (ACH or wire), or other methods agreed in writing.</p>
+  <p><strong>Late payment:</strong> payments more than fourteen (14) days past due accrue a late fee of 1.5% per month. Willow may pause work on overdue accounts.</p>
+
+  <h2>6. Revisions</h2>
+  <p>Two (2) rounds of revisions are included. A round is defined as a consolidated set of feedback delivered in writing from Client's named point of contact.</p>
+  <p>Additional rounds, or requests that fall outside the original concept direction, are billed at <span class="field">[$Rate] per hour</span>, quoted and approved in advance.</p>
+
+  <h2>7. What the Client Brings</h2>
+  <ul>
+    <li>A single named point of contact with authority to give feedback and approvals</li>
+    <li>Feedback within <strong>three (3) business days</strong> of each delivery</li>
+    <li>Any required brand assets, references, or source materials at project start</li>
+    <li>Responses to clarifying questions within two (2) business days</li>
+  </ul>
+  <p>If feedback is delayed beyond these windows, the timeline extends accordingly.</p>
+
+  <h2>8. Ownership</h2>
+  <p>Work remains Willow's property until final payment is received.</p>
+  <p>Upon final payment, ownership of the approved final deliverable transfers to Client. Client may use, modify, and reproduce the work without further permission or fees.</p>
+  <p><strong>Preliminary concepts not selected</strong> remain Willow's property and may be repurposed.</p>
+  <p><strong>Willow retains the right</strong> to display the work in portfolio contexts unless Client requests otherwise in writing before the project begins.</p>
+  <p><strong>Third-party assets</strong> (fonts, stock imagery, licensed elements) carry their own licenses, disclosed to Client. Client is responsible for maintaining those licenses after handover.</p>
+
+  <h2>9. Termination</h2>
+  <p>Either party may terminate this agreement with written notice.</p>
+  <p>If Client terminates:</p>
+  <ul>
+    <li><strong>Before concept presentation:</strong> deposit is retained; no further payment owed</li>
+    <li><strong>After concept presentation:</strong> Client pays 75% of the total fee; Willow delivers work completed to date</li>
+    <li><strong>After first revision round:</strong> Client pays the full fee; Willow delivers all completed work</li>
+  </ul>
+  <p>If Willow terminates for reasons other than Client breach, Willow will refund any portion of the deposit corresponding to work not yet performed.</p>
+
+  <h2>10. Confidentiality</h2>
+  <p>Both parties agree to protect each other's confidential information — including business strategies, unreleased work, and any information marked or reasonably understood as confidential.</p>
+
+  <h2>11. Limits</h2>
+  <p>Willow's total liability under this agreement is limited to the total fees paid by Client under this agreement. Neither party is liable for indirect, incidental, or consequential damages.</p>
+  <p>Willow provides design services in good faith but does not guarantee specific business outcomes or results.</p>
+
+  <h2>12. Governing Law</h2>
+  <p>This agreement is governed by the laws of the State of California. Disputes will be resolved through good-faith mediation before litigation. Litigation, if necessary, will take place in San Diego County, California.</p>
+
+  <h2>13. General</h2>
+  <p><strong>Independent contractor:</strong> Willow operates as an independent contractor.</p>
+  <p><strong>Amendments:</strong> changes must be made in writing and signed by both parties.</p>
+  <p><strong>Entire agreement:</strong> this document represents the full agreement between the parties.</p>
+  <p><strong>Severability:</strong> if any clause is found unenforceable, the remaining clauses remain in effect.</p>
+
+  <h2>14. Signatures</h2>
+  <div class="signature-block">
+    <div class="sig-party">
+      <div class="party-name">Weeping Willow Whisperer LLC</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Signature</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Candan Üstün, Founder</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Date</div>
+    </div>
+    <div class="sig-party">
+      <div class="party-name"><span class="field">[Client Legal Name]</span></div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Signature</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Name, Title</div>
+      <div class="sig-line"></div>
+      <div class="sig-label">Date</div>
+    </div>
+  </div>
+
+  <div class="closing-note">
+    One project, done well, is its own small argument for how the rest of the work wants to be done.
+  </div>
+
+  <div class="footer">
+    WEEPING WILLOW WHISPERER LLC · SAN DIEGO, CALIFORNIA · candanu@icloud.com
+  </div>
+</div>
+
+</body>
+</html>
